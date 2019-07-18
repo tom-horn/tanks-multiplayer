@@ -2,12 +2,13 @@ let player;
 let tanks = [];
 let map;
 let seed = "hello";
+let game_over = false;
 
 function setup() {
   createCanvas(400, 400);
   angleMode(DEGREES);
   rectMode(CENTER);
-  frameRate(30);
+  frameRate(60);
 
   player = new Tank(20, 20);
   map = new Map(seed);
@@ -15,6 +16,9 @@ function setup() {
 }
 
 function draw() {
+  if (game_over) {
+    return;
+  }
   background(255);
   for (let i = 0; i < tanks.length; i++) {
     tanks[i].update();
@@ -24,17 +28,22 @@ function draw() {
   processKeys();
   player.update();
   player.show();
-  console.log(player.rotation);
 
   for (let i = player.bullets.length - 1; i > 0; i--) {
     let bullet = player.bullets[i];
 
-    if (bullet.dead()) {
-      player.deleteBullet(i);
-    } else {
-      bullet.update();
-      bullet.show();
+    let result = bullet.hitTank([player]);
+    if (result.hit) {
+      console.log("you're dead son!");
+      game_over = true;
+      return;
     }
+
+    result = bullet.hitTank(tanks);
+    tanks = result.tanks;
+
+    bullet.update();
+    bullet.show();
   }
 
   for (let i = 0; i < map.cells.length; i++) {

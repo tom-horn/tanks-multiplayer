@@ -40,6 +40,7 @@ function Tank(x, y) {
 
       for (let i = 0; i < nearbyCells.length; i++) {
         let cell = nearbyCells[i];
+        // really bad and repetitive code here, fix later
         if (cell.left) {
           // check collision with tank body and wall
           if (lineRect(cell.xleft, cell.ytop, cell.xleft, cell.ybottom,
