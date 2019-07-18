@@ -9,26 +9,27 @@ function Cell(row, col, left, right, top, bottom, size) {
 
     this.size = size;
 
+    this.xleft = this.col * this.size;
+    this.xright = this.xleft + this.size;
+    this.ytop = this.row * this.size;
+    this.ybottom = this.ytop + this.size;
+
     this.show = function() {
-        let xleft = this.col * this.size;
-        let xright = xleft + this.size;
-        let ytop = row * this.size;
-        let ybottom = ytop + this.size;
         stroke(0);
         if (this.left) {
-            line(xleft, ytop, xleft, ybottom);
+            line(this.xleft, this.ytop, this.xleft, this.ybottom);
         }
 
         if (this.right) {
-            line(xright, ytop, xright, ybottom);
+            line(this.xright, this.ytop, this.xright, this.ybottom);
         }
 
         if (this.top) {
-            line(xleft, ytop, xright, ytop);
+            line(this.xleft, this.ytop, this.xright, this.ytop);
         }
 
         if (this.bottom) {
-            line(xleft, ybottom, xright, ybottom);
+            line(this.xleft, this.ybottom, this.xright, this.ybottom);
         }
     }
 }

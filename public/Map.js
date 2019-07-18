@@ -7,9 +7,7 @@ function Map(seed) {
 
     this.createWalls = function() {
         for (let i = 0; i < Math.round(width / this.cellSize); i ++) {
-            console.log(width);
             for (let j = 0; j < Math.round(height / this.cellSize); j++) {
-                console.log(j);
                 let left;
                 let right;
                 let top;
@@ -46,5 +44,15 @@ function Map(seed) {
                 this.cells.push(new Cell(j, i, left, right, top, bottom, this.cellSize));
             }
         }
+    }
+
+    this.getSurroundingCells = function(x, y) {
+        let row = Math.floor(y / this.cellSize);
+        let col = Math.floor(x / this.cellSize);
+        
+        let nearbyCells = this.cells.filter(cell => cell.row <= row + 1 && cell.row >= row - 1
+            && cell.col <= col + 1 && cell.col >= col - 1);
+        
+        return nearbyCells;
     }
 }

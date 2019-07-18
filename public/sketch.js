@@ -7,7 +7,9 @@ function setup() {
   createCanvas(400, 400);
   angleMode(DEGREES);
   rectMode(CENTER);
-  player = new Tank(10, 10);
+  frameRate(30);
+
+  player = new Tank(20, 20);
   map = new Map(seed);
   map.createWalls();
 }
@@ -22,6 +24,7 @@ function draw() {
   processKeys();
   player.update();
   player.show();
+  console.log(player.rotation);
 
   for (let i = player.bullets.length - 1; i > 0; i--) {
     let bullet = player.bullets[i];
@@ -48,8 +51,10 @@ function processKeys() {
   }
 
   if (keyIsDown(UP_ARROW)) {
+    console.log("moving forward");
     player.moveForward();
   } else if (keyIsDown(DOWN_ARROW)) {
+    console.log("moving back");
     player.moveBackward();
   } else {
     player.setVel(0, 0);
