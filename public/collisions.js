@@ -22,12 +22,17 @@ function lineRect(x1, y1, x2, y2, rx, ry, rw, rh, angle, cx, cy) {
     let bottomleft = rotatePoint(cx, cy, xleft, ybottom, angle);
     let bottomright = rotatePoint(cx, cy, xright, ybottom, angle);
 
+    // ellipse (topleft[0], topleft[1], 2, 2);
+    // ellipse(topright[0], topright[1], 2, 2);
+    // ellipse(bottomleft[0], bottomleft[1], 2, 2);
+    // ellipse(bottomright[0], bottomright[1], 2, 2);
+
     // check if the line has hit any of the rectangle's sides
     // uses the Line/Line function
-    let left =   lineLine(topleft[0], topleft[1], bottomleft[0], bottomleft[1]);
-    let right =  lineLine(topright[0], topright[1], bottomright[0], bottomright[1]);
-    let top =    lineLine(topleft[0], topleft[1], topright[0], topright[1]);
-    let bottom = lineLine(bottomleft[0], bottomleft[1], bottomright[0], bottomright[1]);
+    let left =   lineLine(x1, y1, x2, y2, topleft[0], topleft[1], bottomleft[0], bottomleft[1]);
+    let right =  lineLine(x1, y1, x2, y2, topright[0], topright[1], bottomright[0], bottomright[1]);
+    let top =    lineLine(x1, y1, x2, y2, topleft[0], topleft[1], topright[0], topright[1]);
+    let bottom = lineLine(x1, y1, x2, y2, bottomleft[0], bottomleft[1], bottomright[0], bottomright[1]);
 
     // if ANY of the above are true, the line
     // has hit the rectangle

@@ -1,12 +1,16 @@
-function Tank(x, y) {
+function Tank(x, y, id, rotation=0, bullets=[]) {
+    this.id = id;
     this.x = x;
     this.y = y;
     this.size = 20;
     this.xvel = 0;
     this.yvel = 0;
-    this.rotation = 0;
-    this.bullets = [];
-    this.turretLength = 25
+    this.forwardVelocityFactor = 2.5;
+    this.backwardVelocityFactor = 1;
+    this.rotationDelta = 4;
+    this.rotation = rotation;
+    this.bullets = bullets;
+    this.turretLength = 20
     
     this.show = function() {
       fill(0);
@@ -23,7 +27,7 @@ function Tank(x, y) {
       let newX = this.x + this.xvel;
       let newY = this.y + this.yvel;
 
-      let isValid = this.positionIsValid(newX, newY)
+      let isValid = this.positionIsValid(newX, newY, this.rotation)
       if (!isValid) {
         return;
       }
@@ -35,7 +39,7 @@ function Tank(x, y) {
       this.y = constrain(this.y, 0, height);
     }
 
-    this.positionIsValid = function(x, y) {
+    this.positionIsValid = function(x, y, angle) {
       let nearbyCells = map.getSurroundingCells(x, y);
 
       for (let i = 0; i < nearbyCells.length; i++) {
@@ -44,14 +48,14 @@ function Tank(x, y) {
         if (cell.left) {
           // check collision with tank body and wall
           if (lineRect(cell.xleft, cell.ytop, cell.xleft, cell.ybottom,
-                x - this.size / 2, y - this.size / 2, this.size, this.size, this.rotation,
+                x - this.size / 2, y - this.size / 2, this.size, this.size, angle,
                 x, y)) {
             return false;
           }
           
           // check collision with turret and wall
           if (lineRect(cell.xleft, cell.ytop, cell.xleft, cell.ybottom,
-                x, y, this.turretLength, 5, this.rotation,
+                x, y, this.turretLength, 5, angle,
                 x, y)) {
             return false;
           }
@@ -60,14 +64,14 @@ function Tank(x, y) {
         if (cell.right) {
           // check collision with tank body and wall
           if (lineRect(cell.xright, cell.ytop, cell.xright, cell.ybottom,
-            x - this.size / 2, y - this.size / 2, this.size, this.size, this.rotation,
+            x - this.size / 2, y - this.size / 2, this.size, this.size, angle,
             x, y)) {
             return false;
           }
       
           // check collision with turret and wall
           if (lineRect(cell.xright, cell.ytop, cell.xright, cell.ybottom,
-            x, y, this.turretLength, 5, this.rotation,
+            x, y, this.turretLength, 5, angle,
             x, y)) {
             return false;
           }
@@ -76,14 +80,14 @@ function Tank(x, y) {
         if (cell.bottom) {
           // check collision with tank body and wall
           if (lineRect(cell.xleft, cell.ybottom, cell.xright, cell.ybottom,
-            x - this.size / 2, y - this.size / 2, this.size, this.size, this.rotation,
+            x - this.size / 2, y - this.size / 2, this.size, this.size, angle,
             x, y)) {
             return false;
           }
       
           // check collision with turret and wall
           if (lineRect(cell.xleft, cell.ybottom, cell.xright, cell.ybottom,
-            x, y, this.turretLength, 5, this.rotation,
+            x, y, this.turretLength, 5, angle,
             x, y)) {
             return false;
           }
@@ -92,14 +96,14 @@ function Tank(x, y) {
         if (cell.top) {
           // check collision with tank body and wall
           if (lineRect(cell.xleft, cell.ytop, cell.xright, cell.ytop,
-            x - this.size / 2, y - this.size / 2, this.size, this.size, this.rotation,
+            x - this.size / 2, y - this.size / 2, this.size, this.size, angle,
             x, y)) {
             return false;
           }
       
           // check collision with turret and wall
           if (lineRect(cell.xleft, cell.ytop, cell.xright, cell.ytop,
-            x, y, this.turretLength, 5, this.rotation,
+            x, y, this.turretLength, 5, angle,
             x, y)) {
             return false;
           }
@@ -121,21 +125,29 @@ function Tank(x, y) {
     }
 
     this.rotateLeft = function() {
-        this.rotation -= 3;
+      let newRot = this.rotation - this.rotationDelta;
+      
+      if (this.positionIsValid(this.x, this.y, newRot)) {
+        this.rotation = newRot;
+      }
     }
 
     this.rotateRight = function() {
-        this.rotation += 3;
+      let newRot = this.rotation + this.rotationDelta;
+      
+      if (this.positionIsValid(this.x, this.y, newRot)) {
+        this.rotation = newRot;
+      }
     }
 
     this.moveForward = function() {
-      this.xvel = Math.cos(radians(this.rotation)) * 2.5;
-      this.yvel = Math.sin(radians(this.rotation)) * 2.5;
+      this.xvel = Math.cos(radians(this.rotation)) * this.forwardVelocityFactor;
+      this.yvel = Math.sin(radians(this.rotation)) * this.forwardVelocityFactor;
     }
 
     this.moveBackward = function() {
-      this.xvel = -Math.cos(radians(this.rotation))
-      this.yvel = -Math.sin(radians(this.rotation))
+      this.xvel = -Math.cos(radians(this.rotation)) * this.backwardVelocityFactor;
+      this.yvel = -Math.sin(radians(this.rotation)) * this.backwardVelocityFactor;
     }
 
     this.shoot = function() {

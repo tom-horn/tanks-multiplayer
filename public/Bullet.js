@@ -1,9 +1,10 @@
-function Bullet(x, y, angle) {
+function Bullet(x, y, angle, xvel=null, yvel=null) {
     this.x = x;
     this.y = y;
-    this.angle = angle;
-    this.xvel = Math.cos(radians(this.angle));
-		this.yvel = Math.sin(radians(this.angle));
+		this.angle = angle;
+		this.velocityFactor = 1;
+    this.xvel = (xvel) ? xvel : Math.cos(radians(this.angle)) * this.velocityFactor;
+		this.yvel = (yvel) ? yvel : Math.sin(radians(this.angle)) * this.velocityFactor;
 		this.r = 2.5;
 		this.errorCount = 0;
 
@@ -35,6 +36,7 @@ function Bullet(x, y, angle) {
 
 			this.x = newx;
 			this.y = newy;
+			this.errorCount = 0;
     }
 
     this.positionIsValid = function(x, y) {
@@ -101,19 +103,20 @@ function Bullet(x, y, angle) {
 		}
 		
 		this.hitTank = function(tanks) {
-			let newTanks = [];
 			let hit = false;
-			for (let i = 0; i < tanks.length; i++) {
-				let tank = tanks[i];
+			for (let key in tanks) {
+				let tank = tanks[key];
 				if (circleRect(this.x, this.y, this.r, tank.x - tank.size / 2, tank.y - tank.size / 2, tank.size, tank.size, tank.rotation, tank.x, tank.y)) {
 					hit = true;
-				} else {
-					newTanks.push(tank);
+					return {
+						hit: hit,
+						tank: tank
+					};
 				}
 			}
+
 			return {
 				hit: hit,
-				tanks: tanks
 			}
 		}
 
