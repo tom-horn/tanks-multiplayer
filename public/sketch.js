@@ -5,8 +5,6 @@ let seed = "hellllooo";
 let game_over = false;
 let socket = io();
 let cowabungaAudio = document.getElementById("cowabunga-audio");
-const options = { probabilityThreshold: 0.95 };
-let classifier;
 
 function createNewBullets(oldBullets) {
   let bullets = [];
@@ -30,7 +28,6 @@ function newMap(newSeed) {
 }
 
 function setup() {
-  classifier = ml5.soundClassifier('SpeechCommands18w', options);
   createCanvas(400, 400);
   angleMode(DEGREES);
   rectMode(CENTER);
@@ -81,29 +78,6 @@ function setup() {
   setInterval(function() {
     socket.emit('update', player);
   }, 50);
-
-  classifier.classify(gotResult);
-}
-
-function gotResult(error, result) {
-  if (error) {
-    console.log(error);
-  }
-  let command = result[0].label;
-
-  if (command === "up") {
-    player.moveForward();
-  } else if (command === "stop") {
-    player.setVel(0, 0);
-  } else if (command === "down") {
-    player.moveBackward();
-  } else if (command === "left") {
-    player.rotateLeft();
-  } else if (command === "right") {
-    player.rotateRight();
-  } else if (command === "go") {
-    player.shoot();
-  }
 }
 
 function draw() {
@@ -169,10 +143,9 @@ function processKeys() {
     player.moveForward();
   } else if (keyIsDown(DOWN_ARROW)) {
     player.moveBackward();
-  } 
-  //else if (!keyIsPressed) {
-  //   player.setVel(0, 0);
-  // }
+  } else {
+    player.setVel(0, 0);
+  }
 }
 
 function keyPressed() {
