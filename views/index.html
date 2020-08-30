@@ -1,38 +1,33 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.8.0/p5.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.8.0/addons/p5.dom.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.8.0/addons/p5.sound.min.js"></script>
-    <meta charset="utf-8" />
+<html><head>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.4.8/socket.io.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+  <link rel="stylesheet" href="/public/css/main.css">
+ 
+<title>Home</title>
+<link rel="stylesheet" href="/public/css/index.css">
 
-  </head>
-  <body>
-    <audio id="cowabunga-audio" src="/public/cowabunga.wav"></audio>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/seedrandom/3.0.1/seedrandom.min.js"></script>
-    <script src="https://unpkg.com/ml5@0.3.1/dist/ml5.min.js"></script>
-    <script src="/socket.io/socket.io.js"></script>
-    <script src="/public/collisions.js"></script>
-    <script src="/public/Cell.js"></script>
-    <script src="/public/Map.js"></script>
-    <script src="/public/Bullet.js"></script>
-    <script src="/public/Tank.js"></script>
-    <script src="/public/sketch.js"></script>
-    <style>
-      html, body {
-        height: 100%;
-      }
+</head>
+<body>
 
-      body {
-        margin: 0;
-        display: flex;
+<div id="page-wrapper">
 
-        /* This centers our sketch horizontally. */
-        justify-content: center;
+  <!-- Banner -->
+      <section id="banner">
+          <h2>Tank Mayhem</h2>
+          <p>Play Tank Mayhem with the boys online</p>
+          <ul class="actions special">
+              <li><a href="/play" id="hostBtn" class="button primary">Play Game</a></li>
+              <!-- <li><a href="#" id="joinBtn" class="button">Join Game</a></li> -->
+          </ul>
+      </section>
 
-        /* This centers our sketch vertically. */
-        align-items: center;
-      }
-    </style>
-  </body>
-</html>
+  
+  <!-- Footer -->
+      <footer id="footer">
+          <ul class="copyright">
+              <li>© Thornton Mills. All rights reserved.</li><li>Design: <a href="http://html5up.net">HTML5 UP</a></li>
+          </ul>
+      </footer>
+
+</div>
+</body></html>

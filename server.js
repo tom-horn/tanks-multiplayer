@@ -11,7 +11,10 @@ let playerSockets = {};
 
 app.get("/", function(req, res) {
 	res.sendFile(path.join(__dirname, "views/index.html"));
-	console.log("New Request: Method - " + req.route.stack[0].method + "   " + " Route - " + req.route.path);
+});
+
+app.get("/play", function(req, res) {
+  res.sendFile(path.join(__dirname, "views/game.html"));
 });
 
 app.use("/public", express.static("./public"));
@@ -20,13 +23,9 @@ http.listen(3000, function(){
 });
 
 io.on('connection', function(socket){
-	console.log('a user connected');
-
 	socket.on('newplayer', function(tank) {
-		console.log("new tank entered the arena");
 		socket.broadcast.emit('newplayer', tank);
 		socket.emit('addplayers', players);
-		console.log(players);
 		players[tank.id] = tank;
 		playerSockets[tank.id] = socket;
 	})
@@ -35,12 +34,21 @@ io.on('connection', function(socket){
 		socket.broadcast.emit('update', tank);
 	})
 
-	socket.on('kill', function(tank) {
-		delete players[tank.id];
-		socket.broadcast.emit('kill', tank);
-	})
+	socket.on('kill', function(tankId) {
+		delete players[tankId];
+		socket.broadcast.emit('kill', tankId);
+	});
 
 	socket.on('disconnect', function(){
-		console.log('user disconnected');
+    // remove disconnected users from the game
+    for (let entry of Object.entries(playerSockets)) {
+      let tankId = entry[0];
+      let pSocket = entry[1];
+      if (socket.id == pSocket.id) {
+        delete playerSockets[tankId];
+        delete players[tankId];
+        socket.broadcast.emit('kill', tankId);
+      }
+    }
 	});
 });

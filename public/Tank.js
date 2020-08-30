@@ -1,8 +1,11 @@
-function Tank(x, y, id, rotation=0, bullets=[]) {
+function Tank(x, y, id, rotation=0, bullets=[], colour) {
     this.id = id;
     this.x = x;
     this.y = y;
-    this.size = 20;
+    this.colour = colour;
+    this.size = 15;
+    this.width = 15;
+    this.length = 18;
     this.xvel = 0;
     this.yvel = 0;
     this.forwardVelocityFactor = 2.5;
@@ -10,7 +13,7 @@ function Tank(x, y, id, rotation=0, bullets=[]) {
     this.rotationDelta = 4;
     this.rotation = rotation;
     this.bullets = bullets;
-    this.turretLength = 20
+    this.turretLength = 10;
     
     this.show = function() {
       fill(0);
@@ -18,8 +21,14 @@ function Tank(x, y, id, rotation=0, bullets=[]) {
       push();
       translate(this.x, this.y);
       rotate(this.rotation);
-      rect(0, 0, this.size, this.size);
-      rect(15, 0, this.turretLength, 5);
+      
+      // set the colour of the tank
+      let c = color(this.colour.red, this.colour.blue, this.colour.green);
+      fill(c);
+      noStroke();
+
+      rect(0, 0, this.length, this.width);
+      rect(10, 0, this.turretLength, 5);
       pop();
     }
     
@@ -42,14 +51,18 @@ function Tank(x, y, id, rotation=0, bullets=[]) {
     this.positionIsValid = function(x, y, angle) {
       let nearbyCells = map.getSurroundingCells(x, y);
 
+      let rx = x - this.width / 2;
+      let ry = y - this.length / 2;
+      let rw = this.width;
+      let rh = this.length;
+
       for (let i = 0; i < nearbyCells.length; i++) {
         let cell = nearbyCells[i];
         // really bad and repetitive code here, fix later
         if (cell.left) {
           // check collision with tank body and wall
           if (lineRect(cell.xleft, cell.ytop, cell.xleft, cell.ybottom,
-                x - this.size / 2, y - this.size / 2, this.size, this.size, angle,
-                x, y)) {
+                rx, ry, rw, rh, angle, x, y)) {
             return false;
           }
           
@@ -64,8 +77,7 @@ function Tank(x, y, id, rotation=0, bullets=[]) {
         if (cell.right) {
           // check collision with tank body and wall
           if (lineRect(cell.xright, cell.ytop, cell.xright, cell.ybottom,
-            x - this.size / 2, y - this.size / 2, this.size, this.size, angle,
-            x, y)) {
+            rx, ry, rw, rh, angle, x, y)) {
             return false;
           }
       
@@ -80,8 +92,7 @@ function Tank(x, y, id, rotation=0, bullets=[]) {
         if (cell.bottom) {
           // check collision with tank body and wall
           if (lineRect(cell.xleft, cell.ybottom, cell.xright, cell.ybottom,
-            x - this.size / 2, y - this.size / 2, this.size, this.size, angle,
-            x, y)) {
+            rx, ry, rw, rh, angle, x, y)) {
             return false;
           }
       
@@ -96,8 +107,7 @@ function Tank(x, y, id, rotation=0, bullets=[]) {
         if (cell.top) {
           // check collision with tank body and wall
           if (lineRect(cell.xleft, cell.ytop, cell.xright, cell.ytop,
-            x - this.size / 2, y - this.size / 2, this.size, this.size, angle,
-            x, y)) {
+            rx, ry, rw, rh, angle, x, y)) {
             return false;
           }
       
@@ -114,8 +124,9 @@ function Tank(x, y, id, rotation=0, bullets=[]) {
     }
 
     this.getTurretTip = function(x, y) {
-      let tx = x + 25 * Math.cos(radians(this.rotation))
-      let ty = y + 25 * Math.sin(radians(this.rotation))
+      let offset = 4;
+      let tx = x + ((this.turretLength + offset) * Math.cos(radians(this.rotation)))
+      let ty = y + ((this.turretLength + offset) * Math.sin(radians(this.rotation)))
       return [tx, ty];
     }
     
@@ -153,7 +164,7 @@ function Tank(x, y, id, rotation=0, bullets=[]) {
     this.shoot = function() {
       if (this.bullets.length < 15) {
         let tip = this.getTurretTip(this.x, this.y);
-        this.bullets.push(new Bullet(tip[0], tip[1], this.rotation));
+        this.bullets.push(new Bullet(tip[0], tip[1], this.rotation, null, null, this.colour));
       }
     }
 

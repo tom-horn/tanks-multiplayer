@@ -1,15 +1,20 @@
-function Bullet(x, y, angle, xvel=null, yvel=null) {
+function Bullet(x, y, angle, xvel=null, yvel=null, colour) {
     this.x = x;
     this.y = y;
+    this.colour = colour;
 		this.angle = angle;
-		this.velocityFactor = 1;
+		this.velocityFactor = 1.5;
     this.xvel = (xvel) ? xvel : Math.cos(radians(this.angle)) * this.velocityFactor;
 		this.yvel = (yvel) ? yvel : Math.sin(radians(this.angle)) * this.velocityFactor;
 		this.r = 2.5;
 		this.errorCount = 0;
 
     this.show = function() {
-        ellipse(this.x, this.y, this.r * 2, this.r * 2);
+      let c = color(this.colour.red, this.colour.blue, this.colour.green);
+      fill(c);
+      noStroke();
+
+      ellipse(this.x, this.y, this.r * 2, this.r * 2);
     }
 
     this.update = function() {

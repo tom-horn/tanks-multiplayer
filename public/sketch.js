@@ -6,19 +6,19 @@ let game_over = false;
 let socket = io();
 let cowabungaAudio = document.getElementById("cowabunga-audio");
 
-function createNewBullets(oldBullets) {
+function createNewBullets(oldBullets, colour) {
   let bullets = [];
   for (let i = 0; i < oldBullets.length; i++) {
     bullet = oldBullets[i];
-    let nb = new Bullet(bullet.x, bullet.y, bullet.angle, bullet.xvel, bullet.yvel);
+    let nb = new Bullet(bullet.x, bullet.y, bullet.angle, bullet.xvel, bullet.yvel, colour);
     bullets.push(nb);
   }
   return bullets;
 }
 
 function createNewTank(oldTank) {
-  let bullets = createNewBullets(oldTank.bullets);
-  return new Tank(oldTank.x, oldTank.y, oldTank.id, oldTank.rotation, bullets);
+  let bullets = createNewBullets(oldTank.bullets, oldTank.colour);
+  return new Tank(oldTank.x, oldTank.y, oldTank.id, oldTank.rotation, bullets, oldTank.colour);
 }
 
 function newMap(newSeed) {
@@ -33,7 +33,7 @@ function setup() {
   rectMode(CENTER);
   frameRate(50);
 
-  player = new Tank(20, 20, create_UUID());
+  player = new Tank(20, 20, create_UUID(), 0, [], getRandomRgb());
   newMap(seed);
 
   socket.emit('newplayer', player);
@@ -55,7 +55,7 @@ function setup() {
 
   // receive update message from other players
   socket.on('update', function(tank) {
-    let bullets = createNewBullets(tank.bullets);
+    let bullets = createNewBullets(tank.bullets, tank.colour);
     try {
       tanks[tank.id].x = tank.x;
       tanks[tank.id].y = tank.y;
@@ -66,10 +66,10 @@ function setup() {
   })
 
   // receive kill message
-  socket.on('kill', function(tank) {
-    if (tank.id in tanks) {
-      delete tanks[tank.id];
-    } else if (tank.id === player.id) {
+  socket.on('kill', function(tankId) {
+    if (tankId in tanks) {
+      delete tanks[tankId];
+    } else if (tankId === player.id) {
       game_over = true;
       alert("you dead!");
     }
@@ -80,10 +80,20 @@ function setup() {
   }, 50);
 }
 
+function displayGameOver() {
+  background(0);
+  textSize(32);
+  fill(255, 255, 255);
+  textAlign(CENTER);
+  text('GAME OVER', width * 0.5, height * 0.5);
+}
+
 function draw() {
   if (game_over) {
+    displayGameOver();
     return;
   }
+
   background(255);
   for(let key in tanks) {
     let tank = tanks[key];
@@ -101,23 +111,25 @@ function draw() {
   player.update();
   player.show();
 
-  for (let i = player.bullets.length - 1; i > 0; i--) {
+  for (let i = player.bullets.length - 1; i >= 0; i--) {
     let bullet = player.bullets[i];
 
+    // check if current player has been hit
     let result = bullet.hitTank([player]);
     if (result.hit) {
       console.log("you're dead son!");
-      socket.emit("kill", player);
+      socket.emit("kill", player.id);
       game_over = true;
       player.deleteBullet(i);
       return;
     }
 
+    // check if other tanks have been hit
     result = bullet.hitTank(tanks);
     if (result.hit) {
       delete tanks[result.tank.id];
       console.log("killed another tank!");
-      socket.emit("kill", result.tank);
+      socket.emit("kill", result.tank.id);
       player.deleteBullet(i);
       cowabungaAudio.play();
     }
@@ -162,4 +174,16 @@ function create_UUID(){
       return (c=='x' ? r :(r&0x3|0x8)).toString(16);
   });
   return uuid;
+}
+
+function getRandomRgb() {
+  var num = Math.round(0xffffff * Math.random());
+  var r = num >> 16;
+  var g = num >> 8 & 255;
+  var b = num & 255;
+  return {
+    "red": r,
+    "green": g,
+    "blue": b,
+  }
 }
