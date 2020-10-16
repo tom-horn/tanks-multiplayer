@@ -10,7 +10,7 @@ let players = {};
 let playerSockets = {};
 
 app.get("/", function(req, res) {
-	res.sendFile(path.join(__dirname, "views/index.html"));
+  res.sendFile(path.join(__dirname, "views/index.html"));
 });
 
 app.get("/play", function(req, res) {
@@ -19,12 +19,12 @@ app.get("/play", function(req, res) {
 
 app.use("/public", express.static("./public"));
 http.listen(3000, function(){
-	console.log('listening on *:3000');
+  console.log('listening on *:3000');
 });
 
 io.on('connection', function(socket){
-	socket.on('newplayer', function(tank) {
-		socket.broadcast.emit('newplayer', tank);
+  socket.on('newplayer', function(tank) {
+    socket.broadcast.emit('newplayer', tank);
 		socket.emit('addplayers', players);
 		players[tank.id] = tank;
 		playerSockets[tank.id] = socket;
