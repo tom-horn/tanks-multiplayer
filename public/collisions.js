@@ -22,11 +22,6 @@ function lineRect(x1, y1, x2, y2, rx, ry, rw, rh, angle, cx, cy) {
     let bottomleft = rotatePoint(cx, cy, xleft, ybottom, angle);
     let bottomright = rotatePoint(cx, cy, xright, ybottom, angle);
 
-    // ellipse (topleft[0], topleft[1], 2, 2);
-    // ellipse(topright[0], topright[1], 2, 2);
-    // ellipse(bottomleft[0], bottomleft[1], 2, 2);
-    // ellipse(bottomright[0], bottomright[1], 2, 2);
-
     // check if the line has hit any of the rectangle's sides
     // uses the Line/Line function
     let left =   lineLine(x1, y1, x2, y2, topleft[0], topleft[1], bottomleft[0], bottomleft[1]);
@@ -50,24 +45,6 @@ function rotatePoint(cx, cy, x, y, angle) {
         ny = (cos * (y - cy)) - (sin * (x - cx)) + cy;
     return [nx, ny];
 }
-
-// function rotateRect(rx, ry, rw, rh, angle) {
-//     let xleft = rx;
-//     let xright = rx + rw;
-//     let ytop = ry;
-//     let ybottom = ry + rh;
-
-//     let topleft = rotatePoint(cx, cy, xleft, ytop, angle);
-//     let topright = rotatePoint(cx, cy, xright, ytop, angle);
-//     let bottomleft = rotatePoint(cx, cy, xleft, ybottom, angle);
-//     let bottomright = rotatePoint(cx, cy, xright, ybottom, angle);
-//     return {
-//         topleft: topleft,
-//         topright: topright,
-//         bottomleft: bottomleft,
-//         bottomright: bottomright
-//     }
-// }
 
 function lineCircle(x1, y1, x2, y2, cx, cy, r) {
 
