@@ -1,7 +1,7 @@
 let player;
 let tanks = {};
 let map;
-let seed = "hellllooo";
+let seed = "newseed:)";
 let game_over = false;
 let socket = io();
 let cowabungaAudio = document.getElementById("cowabunga-audio");
